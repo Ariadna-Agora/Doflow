@@ -3,57 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organizador de Tareas Pro - DoFlow</title>
-    <!-- Tailwind CSS para estilos modernos -->
+    <title>Ariadna y su equipo - DoFlow</title>
+    <!-- Tailwind CSS para diseño rápido y moderno -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configuración de Tailwind para habilitar el modo oscuro mediante clases
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
     <!-- Lucide Icons para iconos vectoriales limpios -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700&display=swap');
         
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8fafc;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Transición suave para las tareas */
+        /* Transiciones fluidas para las tareas */
         .task-item {
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Scrollbar estilizado */
+        /* Barra de desplazamiento personalizada */
         ::-webkit-scrollbar {
             width: 6px;
         }
         ::-webkit-scrollbar-track {
             background: #f1f5f9;
         }
+        .dark ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
         ::-webkit-scrollbar-thumb {
             background: #cbd5e1;
             border-radius: 4px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
         }
     </style>
 </head>
-<body class="min-h-screen text-slate-800 flex flex-col antialiased">
+<body class="min-h-screen bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 flex flex-col antialiased">
 
     <!-- Encabezado / Navbar -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+    <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 transition-colors duration-300">
         <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-md shadow-indigo-100 flex items-center justify-center">
+                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-md shadow-indigo-100 dark:shadow-none flex items-center justify-center">
                     <i data-lucide="check-square" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold text-slate-900 tracking-tight">DoFlow</h1>
-                    <p class="text-xs text-slate-500">Gestor de productividad personal</p>
+                    <!-- Identificación personalizada para Ariadna y su equipo -->
+                    <h1 class="text-lg md:text-xl font-bold text-slate-900 dark:text-white tracking-tight">Ariadna y su equipo</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Espacio de productividad colaborativa</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2 text-xs md:text-sm text-slate-600 bg-slate-100 px-3.5 py-2 rounded-full font-medium">
-                <i data-lucide="calendar" class="w-4 h-4 text-indigo-600"></i>
-                <span id="current-date">Cargando fecha...</span>
+            
+            <div class="flex items-center gap-3">
+                <!-- Botón de Alternancia de Modo Claro / Oscuro -->
+                <button onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition-all duration-200" title="Cambiar tema">
+                    <i id="theme-icon" data-lucide="moon" class="w-5 h-5"></i>
+                </button>
+                <div class="hidden sm:flex items-center gap-2 text-xs md:text-sm text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 px-3.5 py-2 rounded-full font-medium">
+                    <i data-lucide="calendar" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i>
+                    <span id="current-date">Cargando fecha...</span>
+                </div>
             </div>
         </div>
     </header>
@@ -61,17 +78,17 @@
     <!-- Contenedor Principal de la Aplicación -->
     <main class="flex-1 max-w-5xl w-full mx-auto p-4 md:py-8 grid grid-cols-1 md:grid-cols-12 gap-6">
         
-        <!-- COLUMNA IZQUIERDA: Panel de Progreso y Filtros -->
+        <!-- COLUMNA IZQUIERDA: Progreso y Filtros -->
         <section class="md:col-span-4 space-y-6">
             
             <!-- Tarjeta de Progreso Diario -->
-            <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-800 text-white p-6 rounded-2xl shadow-lg shadow-indigo-100 relative overflow-hidden">
+            <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-800 text-white p-6 rounded-2xl shadow-lg shadow-indigo-100 dark:shadow-none relative overflow-hidden">
                 <div class="absolute -right-6 -bottom-6 opacity-10 text-white">
                     <i data-lucide="award" class="w-32 h-32"></i>
                 </div>
                 
-                <h3 class="font-semibold text-lg opacity-90 mb-1">Tu Progreso</h3>
-                <p class="text-xs opacity-75 mb-4">¡Sigue completando tareas hoy!</p>
+                <h3 class="font-semibold text-lg opacity-90 mb-1">Nuestro Progreso</h3>
+                <p class="text-xs opacity-75 mb-4">¡Completa tus tareas del día!</p>
                 
                 <div class="flex items-baseline gap-2 mb-4">
                     <span id="completion-ratio" class="text-4xl font-extrabold tracking-tight">0%</span>
@@ -89,33 +106,33 @@
             </div>
 
             <!-- Panel de Filtrado -->
-            <div class="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm space-y-5">
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-5 rounded-2xl shadow-sm space-y-5 transition-colors duration-300">
                 <!-- Filtros de Estado -->
                 <div>
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Filtrar por Estado</h3>
+                    <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">Filtrar por Estado</h3>
                     <div class="space-y-1">
-                        <button onclick="setFilter('all')" id="filter-all" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium bg-indigo-50 text-indigo-700 transition-all duration-150">
-                            <span class="flex items-center gap-2"><i data-lucide="list" class="w-4 h-4"></i> Todas</span>
-                            <span id="count-all" class="bg-indigo-100 text-indigo-800 px-2.5 py-0.5 rounded-md text-xs font-bold">0</span>
+                        <button onclick="setFilter('all')" id="filter-all" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 transition-all duration-150">
+                            <span class="flex items-center gap-2"><i data-lucide="list" class="w-4 h-4"></i> Todas las tareas</span>
+                            <span id="count-all" class="bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 px-2.5 py-0.5 rounded-md text-xs font-bold">0</span>
                         </button>
-                        <button onclick="setFilter('pending')" id="filter-pending" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-all duration-150">
-                            <span class="flex items-center gap-2"><i data-lucide="circle" class="w-4 h-4 text-slate-400"></i> Pendientes</span>
-                            <span id="count-pending" class="bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-md text-xs font-bold">0</span>
+                        <button onclick="setFilter('pending')" id="filter-pending" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-150">
+                            <span class="flex items-center gap-2"><i data-lucide="circle" class="w-4 h-4 text-slate-400 dark:text-slate-500"></i> Pendientes</span>
+                            <span id="count-pending" class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2.5 py-0.5 rounded-md text-xs font-bold">0</span>
                         </button>
-                        <button onclick="setFilter('completed')" id="filter-completed" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-all duration-150">
+                        <button onclick="setFilter('completed')" id="filter-completed" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-150">
                             <span class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i> Completadas</span>
-                            <span id="count-completed" class="bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-md text-xs font-bold">0</span>
+                            <span id="count-completed" class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2.5 py-0.5 rounded-md text-xs font-bold">0</span>
                         </button>
                     </div>
                 </div>
 
-                <hr class="border-slate-100">
+                <hr class="border-slate-100 dark:border-slate-700">
 
                 <!-- Filtros de Categorías -->
                 <div>
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Categorías</h3>
+                    <h3 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3">Categorías</h3>
                     <div class="space-y-1" id="category-filters">
-                        <!-- Generado dinámicamente -->
+                        <!-- Se genera de forma dinámica con JavaScript -->
                     </div>
                 </div>
             </div>
@@ -124,39 +141,39 @@
         <!-- COLUMNA DERECHA: Creación de Tareas y Listado -->
         <section class="md:col-span-8 space-y-6">
             
-            <!-- Notificaciones Inteligentes de la App -->
-            <div id="toast" class="hidden transform translate-y-2 opacity-0 transition-all duration-300 bg-slate-900 text-white text-sm px-4 py-3 rounded-xl shadow-lg flex items-center justify-between z-40">
+            <!-- Notificaciones de la Aplicación (Toasts) -->
+            <div id="toast" class="hidden transform translate-y-2 opacity-0 transition-all duration-300 bg-slate-900 dark:bg-slate-800 text-white text-sm px-4 py-3 rounded-xl shadow-lg flex items-center justify-between z-40 border dark:border-slate-700">
                 <div class="flex items-center gap-2">
                     <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
-                    <span id="toast-message">Mensaje informativo</span>
+                    <span id="toast-message">Notificación</span>
                 </div>
                 <button onclick="closeToast()" class="text-slate-400 hover:text-white p-1 rounded-lg transition-colors">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
-            <!-- Formulario de Entrada de Tarea -->
-            <div class="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
-                <h3 class="font-bold text-lg text-slate-900 mb-4 flex items-center gap-2">
-                    <i data-lucide="pencil" class="text-indigo-600 w-5 h-5"></i> ¿Qué tienes pendiente?
+            <!-- Formulario de Entrada de Nueva Tarea -->
+            <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-2xl shadow-sm transition-colors duration-300">
+                <h3 class="font-bold text-lg text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                    <i data-lucide="pencil" class="text-indigo-600 dark:text-indigo-400 w-5 h-5"></i> ¿Qué hay pendiente hoy?
                 </h3>
                 
                 <form id="todo-form" onsubmit="handleAddTask(event)" class="space-y-4">
                     <div class="flex flex-col md:flex-row gap-3">
-                        <!-- Campo de Texto -->
-                        <input type="text" id="task-title" required placeholder="Escribe tu tarea aquí..." 
-                            class="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm placeholder:text-slate-400">
+                        <!-- Título de la Tarea -->
+                        <input type="text" id="task-title" required placeholder="Escribe una tarea para el equipo..." 
+                            class="flex-1 px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none text-slate-800 dark:text-white transition-all text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500">
                         
-                        <!-- Selectores de Categoría y Prioridad -->
+                        <!-- Categoría y Prioridad -->
                         <div class="grid grid-cols-2 gap-2 md:flex">
-                            <select id="task-category" class="px-3 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm bg-white font-medium text-slate-600">
+                            <select id="task-category" class="px-3 py-3 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm bg-white dark:bg-slate-700 font-medium text-slate-600 dark:text-slate-300">
                                 <option value="Trabajo">📁 Trabajo</option>
                                 <option value="Personal">🏡 Personal</option>
                                 <option value="Urgente">🚨 Urgente</option>
                                 <option value="Ideas">💡 Ideas</option>
                             </select>
                             
-                            <select id="task-priority" class="px-3 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm bg-white font-medium text-slate-600">
+                            <select id="task-priority" class="px-3 py-3 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm bg-white dark:bg-slate-700 font-medium text-slate-600 dark:text-slate-300">
                                 <option value="baja">🟢 Prioridad Baja</option>
                                 <option value="media">🟡 Prioridad Media</option>
                                 <option value="alta">🔴 Prioridad Alta</option>
@@ -166,10 +183,10 @@
 
                     <!-- Botón de Envío -->
                     <div class="flex justify-between items-center pt-2">
-                        <span class="text-xs text-slate-400 flex items-center gap-1.5">
+                        <span class="text-xs text-slate-400 dark:text-slate-500 flex items-center gap-1.5">
                             <i data-lucide="clock" class="w-3.5 h-3.5"></i> Presiona Enter para añadir rápidamente
                         </span>
-                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold text-sm px-6 py-3 rounded-xl transition-all shadow-md shadow-indigo-100 flex items-center gap-2">
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold text-sm px-6 py-3 rounded-xl transition-all shadow-md shadow-indigo-100 dark:shadow-none flex items-center gap-2">
                             <i data-lucide="plus" class="w-4 h-4"></i> Añadir Tarea
                         </button>
                     </div>
@@ -179,81 +196,82 @@
             <!-- Listado Principal -->
             <div class="space-y-4">
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                    <h2 class="font-bold text-lg text-slate-900 flex items-center gap-2">
-                        <i data-lucide="activity" class="text-indigo-600 w-5 h-5"></i> Mis Pendientes
+                    <h2 class="font-bold text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                        <i data-lucide="activity" class="text-indigo-600 dark:text-indigo-400 w-5 h-5"></i> Tareas del Equipo
                     </h2>
                     
                     <!-- Barra de Búsqueda -->
                     <div class="relative flex-1 sm:max-w-xs">
-                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
-                        <input type="text" id="search-bar" oninput="handleSearch()" placeholder="Buscar en mis tareas..." 
-                            class="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="search-bar" oninput="handleSearch()" placeholder="Buscar en las tareas..." 
+                            class="w-full pl-9 pr-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
                     </div>
                 </div>
 
                 <!-- Estado Vacío (Empty State) -->
-                <div id="empty-state" class="hidden bg-white border border-slate-200 rounded-2xl p-8 text-center flex flex-col items-center justify-center space-y-3">
-                    <div class="w-16 h-16 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center">
+                <div id="empty-state" class="hidden bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-8 text-center flex flex-col items-center justify-center space-y-3 transition-colors duration-300">
+                    <div class="w-16 h-16 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-500 dark:text-indigo-400 rounded-full flex items-center justify-center">
                         <i data-lucide="sparkles" class="w-8 h-8"></i>
                     </div>
                     <div>
-                        <h4 class="font-semibold text-slate-700">¡Bandeja de entrada limpia!</h4>
-                        <p class="text-sm text-slate-400 max-w-xs mx-auto mt-1">No tienes tareas que coincidan con la vista actual. Agrega una arriba o cambia tus filtros.</p>
+                        <h4 class="font-semibold text-slate-700 dark:text-slate-300">¡Bandeja de entrada limpia!</h4>
+                        <p class="text-sm text-slate-400 dark:text-slate-500 max-w-xs mx-auto mt-1">No hay tareas para la vista seleccionada. Agrega una nueva arriba.</p>
                     </div>
                 </div>
 
-                <!-- Contenedor Dinámico de Tareas -->
+                <!-- Lista de Tareas Dinámica -->
                 <div id="tasks-wrapper" class="space-y-3">
-                    <!-- Las tareas se inyectarán de forma dinámica mediante JavaScript -->
+                    <!-- Las tareas se renderizan aquí dinámicamente -->
                 </div>
             </div>
 
         </section>
     </main>
 
-    <!-- Pie de Página -->
-    <footer class="bg-white border-t border-slate-200 mt-auto py-6 text-center text-xs text-slate-400">
-        <p>© 2026 DoFlow. Guardado automático en el navegador habilitado.</p>
+    <!-- Footer / Pie de Página -->
+    <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 mt-auto py-6 text-center text-xs text-slate-400 dark:text-slate-500 transition-colors duration-300">
+        <p>© 2026 DoFlow. Espacio de Ariadna y su equipo. Guardado automático en navegador activo.</p>
     </footer>
 
-    <!-- Lógica de la Aplicación -->
+    <!-- Lógica de Funcionamiento en JavaScript -->
     <script>
         // --- BASE DE DATOS LOCAL (LocalStorage) ---
         let tasks = JSON.parse(localStorage.getItem('doflow_tasks_db')) || [
-            { id: 1, title: 'Completar planificación estratégica semanal', category: 'Trabajo', priority: 'alta', completed: false },
-            { id: 2, title: 'Planificar rutina de ejercicios para el fin de semana', category: 'Personal', priority: 'baja', completed: true },
-            { id: 3, title: 'Anotar ideas creativas para mi próximo proyecto', category: 'Ideas', priority: 'media', completed: false }
+            { id: 1, title: 'Completar planificación estratégica semanal de Ariadna', category: 'Trabajo', priority: 'alta', completed: false },
+            { id: 2, title: 'Revisar pendientes con el equipo de diseño', category: 'Trabajo', priority: 'media', completed: true },
+            { id: 3, title: 'Anotar ideas creativas para el próximo gran proyecto', category: 'Ideas', priority: 'baja', completed: false }
         ];
 
-        // --- ESTADO INTERNO ---
+        // --- ESTADO DE LA APLICACIÓN ---
         let currentFilter = 'all'; 
         let searchQuery = '';
 
-        // Estilos visuales por categorías
+        // Estilos visuales según categorías
         const categoryStyles = {
-            'Trabajo': { bg: 'bg-blue-50', text: 'text-blue-700 border border-blue-100', dot: 'bg-blue-500' },
-            'Personal': { bg: 'bg-emerald-50', text: 'text-emerald-700 border border-emerald-100', dot: 'bg-emerald-500' },
-            'Urgente': { bg: 'bg-rose-50', text: 'text-rose-700 border border-rose-100', dot: 'bg-rose-500' },
-            'Ideas': { bg: 'bg-amber-50', text: 'text-amber-700 border border-amber-100', dot: 'bg-amber-500' }
+            'Trabajo': { bg: 'bg-blue-50 dark:bg-blue-950/30', text: 'text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-900', dot: 'bg-blue-500' },
+            'Personal': { bg: 'bg-emerald-50 dark:bg-emerald-950/30', text: 'text-emerald-700 dark:text-emerald-300 border border-emerald-100 dark:border-emerald-900', dot: 'bg-emerald-500' },
+            'Urgente': { bg: 'bg-rose-50 dark:bg-rose-950/30', text: 'text-rose-700 dark:text-rose-300 border border-rose-100 dark:border-rose-900', dot: 'bg-rose-500' },
+            'Ideas': { bg: 'bg-amber-50 dark:bg-amber-950/30', text: 'text-amber-700 dark:text-amber-300 border border-amber-100 dark:border-amber-900', dot: 'bg-amber-500' }
         };
 
-        // Estilos visuales por prioridades
+        // Estilos visuales según prioridades
         const priorityStyles = {
-            'baja': { text: 'Baja', badge: 'text-emerald-600 bg-emerald-50 border border-emerald-100' },
-            'media': { text: 'Media', badge: 'text-amber-600 bg-amber-50 border border-amber-100' },
-            'alta': { text: 'Alta', badge: 'text-rose-600 bg-rose-50 border border-rose-100' }
+            'baja': { text: 'Baja', badge: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-100 dark:border-emerald-900' },
+            'media': { text: 'Media', badge: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border border-amber-100 dark:border-amber-900' },
+            'alta': { text: 'Alta', badge: 'text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900' }
         };
 
-        // Mensajes de motivación aleatorios para celebrar completar una tarea
+        // Mensajes de celebración en español
         const motivationalMessages = [
-            "¡Gran trabajo! Tarea cumplida. 🎉",
-            "¡Eres una máquina de productividad! 💪",
-            "Una menos en la lista. ¡Sigue así! 🚀",
-            "¡Progreso fantástico! Estás organizándote genial. 🌟"
+            "¡Buen trabajo! Tarea completada con éxito. 🎉",
+            "¡Excelente ritmo de trabajo equipo! 💪",
+            "¡Una tarea menos en nuestra lista hoy! 🚀",
+            "¡Progreso fabuloso, sigamos avanzando! 🌟"
         ];
 
         // --- INICIALIZACIÓN ---
         document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
             renderDate();
             renderCategoriesFilter();
             renderTasks();
@@ -261,17 +279,47 @@
             lucide.createIcons();
         });
 
-        // --- RENDERIZADO DE FECHA ---
+        // --- MANEJO DEL MODO OSCURO ---
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+                document.documentElement.classList.add('dark');
+                updateThemeIcon(true);
+            } else {
+                document.documentElement.classList.remove('dark');
+                updateThemeIcon(false);
+            }
+        }
+
+        function toggleDarkMode() {
+            const isDark = document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            updateThemeIcon(isDark);
+            showToast(isDark ? 'Modo Oscuro activado 🌙' : 'Modo Claro activado ☀️');
+        }
+
+        function updateThemeIcon(isDark) {
+            const iconButton = document.getElementById('theme-icon');
+            if (isDark) {
+                iconButton.setAttribute('data-lucide', 'sun');
+            } else {
+                iconButton.setAttribute('data-lucide', 'moon');
+            }
+            lucide.createIcons();
+        }
+
+        // --- RENDERIZADO DE FECHA ACTUAL ---
         function renderDate() {
             const options = { weekday: 'long', day: 'numeric', month: 'long' };
             const today = new Date();
-            // Formatear fecha en español
             let dateStr = today.toLocaleDateString('es-ES', options);
             dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
             document.getElementById('current-date').textContent = dateStr;
         }
 
-        // --- FILTROS DE CATEGORÍA ---
+        // --- FILTROS DE CATEGORÍAS ---
         function renderCategoriesFilter() {
             const container = document.getElementById('category-filters');
             container.innerHTML = '';
@@ -283,23 +331,23 @@
                 const btn = document.createElement('button');
                 btn.onclick = () => setFilter(cat);
                 btn.id = `filter-${cat}`;
-                btn.className = `w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-all duration-150`;
+                btn.className = `w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-150`;
                 btn.innerHTML = `
                     <span class="flex items-center gap-2">
                         <span class="w-2.5 h-2.5 rounded-full ${style.dot}"></span> ${cat}
                     </span>
-                    <span class="bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md text-xs font-bold">${count}</span>
+                    <span class="bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-2.5 py-0.5 rounded-md text-xs font-bold">${count}</span>
                 `;
                 container.appendChild(btn);
             });
         }
 
-        // --- RENDERIZADO PRINCIPAL DE TAREAS ---
+        // --- RENDERIZADO DE TAREAS ---
         function renderTasks() {
             const wrapper = document.getElementById('tasks-wrapper');
             const emptyState = document.getElementById('empty-state');
             
-            // Aplicación de filtros de estado y de barra de búsqueda
+            // Filtro activo y barra de búsqueda
             let filteredTasks = tasks.filter(task => {
                 let matchesFilter = true;
                 if (currentFilter === 'pending') matchesFilter = !task.completed;
@@ -327,39 +375,37 @@
                 const priStyle = priorityStyles[task.priority] || priorityStyles['media'];
 
                 const taskEl = document.createElement('div');
-                taskEl.className = `task-item bg-white border border-slate-200 p-4 rounded-2xl flex items-start gap-3 shadow-sm hover:shadow-md ${task.completed ? 'opacity-60 bg-slate-50/50' : ''}`;
+                taskEl.className = `task-item bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 rounded-2xl flex items-start gap-3 shadow-sm hover:shadow-md ${task.completed ? 'opacity-60 bg-slate-50/50 dark:bg-slate-850/50' : ''}`;
                 
                 taskEl.innerHTML = `
-                    <!-- Botón Selector de Estado (Checkbox premium) -->
+                    <!-- Checkbox de Estado -->
                     <button onclick="toggleTask(${task.id})" class="mt-0.5 focus:outline-none transition-transform active:scale-90" aria-label="Marcar tarea">
                         ${task.completed ? 
                             `<div class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-sm shadow-indigo-200">
                                 <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>
                              </div>` : 
-                            `<div class="w-6 h-6 rounded-full border-2 border-slate-300 hover:border-indigo-600 hover:scale-105 transition-all bg-white"></div>`
+                            `<div class="w-6 h-6 rounded-full border-2 border-slate-300 dark:border-slate-600 hover:border-indigo-600 dark:hover:border-indigo-400 hover:scale-105 transition-all bg-white dark:bg-slate-700"></div>`
                         }
                     </button>
 
-                    <!-- Detalles e Información de Tarea -->
+                    <!-- Detalle de Tarea -->
                     <div class="flex-1 min-w-0 space-y-2">
-                        <p class="text-sm font-medium leading-relaxed break-words cursor-pointer select-none ${task.completed ? 'line-through text-slate-400' : 'text-slate-800'}" onclick="toggleTask(${task.id})">
+                        <p class="text-sm font-medium leading-relaxed break-words cursor-pointer select-none ${task.completed ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-800 dark:text-slate-200'}" onclick="toggleTask(${task.id})">
                             ${escapeHTML(task.title)}
                         </p>
                         
                         <div class="flex flex-wrap items-center gap-2 text-xs">
-                            <!-- Badge de Categoría -->
                             <span class="px-2.5 py-1 rounded-full font-semibold ${catStyle.bg} ${catStyle.text}">
                                 ${task.category}
                             </span>
-                            <!-- Badge de Prioridad -->
                             <span class="px-2.5 py-1 rounded-full font-semibold ${priStyle.badge}">
                                 Prioridad ${priStyle.text}
                             </span>
                         </div>
                     </div>
 
-                    <!-- Botón Eliminar -->
-                    <button onclick="deleteTask(${task.id})" class="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-xl transition-all self-center" title="Eliminar tarea">
+                    <!-- Acción Eliminar -->
+                    <button onclick="deleteTask(${task.id})" class="text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 p-2 rounded-xl transition-all self-center" title="Eliminar tarea">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                 `;
@@ -367,13 +413,12 @@
                 wrapper.appendChild(taskEl);
             });
 
-            // Re-renderizar iconos dinámicos
             lucide.createIcons();
         }
 
         // --- CONTROLADORES DE ACCIONES ---
 
-        // Crear una nueva tarea
+        // Añadir una nueva tarea
         function handleAddTask(e) {
             e.preventDefault();
             const titleInput = document.getElementById('task-title');
@@ -394,20 +439,18 @@
             tasks.unshift(newTask);
             saveAndRefresh();
             
-            // Limpiar formulario y reenfocar
             titleInput.value = '';
             titleInput.focus();
             
             showToast('¡Tarea agregada con éxito! 🎯');
         }
 
-        // Cambiar estado completada/pendiente de la tarea
+        // Marcar tarea como completada o pendiente
         function toggleTask(id) {
             tasks = tasks.map(t => {
                 if (t.id === id) {
                     const isNowCompleted = !t.completed;
                     if (isNowCompleted) {
-                        // Lanzar un mensaje motivador aleatorio
                         const randomMsg = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
                         showToast(randomMsg);
                     }
@@ -418,14 +461,14 @@
             saveAndRefresh();
         }
 
-        // Eliminar una tarea por completo
+        // Eliminar tarea de forma permanente
         function deleteTask(id) {
             tasks = tasks.filter(t => t.id !== id);
             saveAndRefresh();
-            showToast('Tarea eliminada de la lista.');
+            showToast('Tarea eliminada con éxito.');
         }
 
-        // Guardar y refrescar todos los componentes
+        // Guardar cambios en el navegador local y refrescar interfaz
         function saveAndRefresh() {
             localStorage.setItem('doflow_tasks_db', JSON.stringify(tasks));
             renderTasks();
@@ -433,7 +476,7 @@
             updateStats();
         }
 
-        // --- FILTROS DE INTERFAZ ---
+        // --- SISTEMA DE FILTRADO ---
         function setFilter(filter) {
             currentFilter = filter;
             renderTasks();
@@ -445,18 +488,17 @@
             allBtnIds.forEach(id => {
                 const el = document.getElementById(`filter-${id}`);
                 if (el) {
-                    el.className = `w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-all duration-150`;
+                    el.className = `w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-150`;
                 }
             });
 
-            // Establecer estilos activos para la selección actual
             const activeBtn = document.getElementById(`filter-${currentFilter}`);
             if (activeBtn) {
-                activeBtn.className = `w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-semibold bg-indigo-50 text-indigo-700 transition-all duration-150`;
+                activeBtn.className = `w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-semibold bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 transition-all duration-150`;
             }
         }
 
-        // --- SISTEMA DE BÚSQUEDA ---
+        // --- BUSCADOR ---
         function handleSearch() {
             searchQuery = document.getElementById('search-bar').value;
             renderTasks();
@@ -468,7 +510,6 @@
             const completed = tasks.filter(t => t.completed).length;
             const pending = total - completed;
 
-            // Actualizar textos e interfaces
             document.getElementById('count-all').textContent = total;
             document.getElementById('count-pending').textContent = pending;
             document.getElementById('count-completed').textContent = completed;
@@ -478,22 +519,21 @@
             document.getElementById('progress-bar').style.width = `${ratio}%`;
             document.getElementById('tasks-count-summary').textContent = `${completed} de ${total} completadas`;
 
-            // Mensajes de ánimo basados en el progreso
             const encouragement = document.getElementById('progress-encouragement');
             if (ratio === 100 && total > 0) {
-                encouragement.textContent = "¡Día completado perfectamente! 🏆";
+                encouragement.textContent = "¡Todo listo por hoy! 🏆";
             } else if (ratio >= 75) {
-                encouragement.textContent = "¡Casi listo! Falta poquísimo. 🔥";
+                encouragement.textContent = "¡Falta muy poco! 🔥";
             } else if (ratio >= 50) {
                 encouragement.textContent = "¡A mitad de camino! 🚀";
             } else if (ratio > 0) {
-                encouragement.textContent = "¡Buen comienzo! Sigue así. ✨";
+                encouragement.textContent = "¡Buen comienzo! ✨";
             } else {
-                encouragement.textContent = "¡Empieza a organizarte hoy! 🎯";
+                encouragement.textContent = "¡Empiecen hoy! 🎯";
             }
         }
 
-        // --- CONTROL DE TOASTS (ALERTAS INTEGRADAS) ---
+        // --- MENSAJES NOTIFICADORES (TOASTS) ---
         let toastTimer;
         function showToast(message) {
             const toast = document.getElementById('toast');
@@ -502,13 +542,11 @@
             clearTimeout(toastTimer);
             toastMsg.textContent = message;
             
-            // Animación de entrada
             toast.classList.remove('hidden');
             setTimeout(() => {
                 toast.classList.remove('translate-y-2', 'opacity-0');
             }, 50);
 
-            // Cerrar automáticamente en 3 segundos
             toastTimer = setTimeout(() => {
                 closeToast();
             }, 3000);
@@ -522,7 +560,7 @@
             }, 300);
         }
 
-        // Seguridad ante inyecciones de código HTML
+        // Utilidad de seguridad para sanitizar cadenas de texto
         function escapeHTML(str) {
             return str.replace(/[&<>'"]/g, 
                 tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
