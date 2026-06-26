@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizador de Tareas Pro - DoFlow</title>
+    <!-- Tailwind CSS para estilos modernos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons para iconos vectoriales limpios -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Transición suave para las tareas */
+        .task-item {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Scrollbar estilizado */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col antialiased">
+
+    <!-- Encabezado / Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 text-white p-2.5 rounded-xl shadow-md shadow-indigo-100 flex items-center justify-center">
+                    <i data-lucide="check-square" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900 tracking-tight">DoFlow</h1>
+                    <p class="text-xs text-slate-500">Gestor de productividad personal</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 text-xs md:text-sm text-slate-600 bg-slate-100 px-3.5 py-2 rounded-full font-medium">
+                <i data-lucide="calendar" class="w-4 h-4 text-indigo-600"></i>
+                <span id="current-date">Cargando fecha...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal de la Aplicación -->
+    <main class="flex-1 max-w-5xl w-full mx-auto p-4 md:py-8 grid grid-cols-1 md:grid-cols-12 gap-6">
+        
+        <!-- COLUMNA IZQUIERDA: Panel de Progreso y Filtros -->
+        <section class="md:col-span-4 space-y-6">
+            
+            <!-- Tarjeta de Progreso Diario -->
+            <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-800 text-white p-6 rounded-2xl shadow-lg shadow-indigo-100 relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 opacity-10 text-white">
+                    <i data-lucide="award" class="w-32 h-32"></i>
+                </div>
+                
+                <h3 class="font-semibold text-lg opacity-90 mb-1">Tu Progreso</h3>
+                <p class="text-xs opacity-75 mb-4">¡Sigue completando tareas hoy!</p>
+                
+                <div class="flex items-baseline gap-2 mb-4">
+                    <span id="completion-ratio" class="text-4xl font-extrabold tracking-tight">0%</span>
+                    <span class="text-sm opacity-85">completado</span>
+                </div>
+
+                <!-- Barra de Progreso Dinámica -->
+                <div class="w-full bg-indigo-950/40 rounded-full h-2.5 mb-2 overflow-hidden">
+                    <div id="progress-bar" class="bg-white h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+                <div class="flex justify-between text-xs opacity-80 font-medium">
+                    <span id="tasks-count-summary">0 de 0 tareas</span>
+                    <span id="progress-encouragement">¡Empieza ahora!</span>
+                </div>
+            </div>
+
+            <!-- Panel de Filtrado -->
+            <div class="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm space-y-5">
+                <!-- Filtros de Estado -->
+                <div>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Filtrar por Estado</h3>
+                    <div class="space-y-1">
+                        <button onclick="setFilter('all')" id="filter-all" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium bg-indigo-50 text-indigo-700 transition-all duration-150">
+                            <span class="flex items-center gap-2"><i data-lucide="list" class="w-4 h-4"></i> Todas</span>
+                            <span id="count-all" class="bg-indigo-100 text-indigo-800 px-2.5 py-0.5 rounded-md text-xs font-bold">0</span>
+                        </button>
+                        <button onclick="setFilter('pending')" id="filter-pending" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-all duration-150">
+                            <span class="flex items-center gap-2"><i data-lucide="circle" class="w-4 h-4 text-slate-400"></i> Pendientes</span>
+                            <span id="count-pending" class="bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-md text-xs font-bold">0</span>
+                        </button>
+                        <button onclick="setFilter('completed')" id="filter-completed" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-all duration-150">
+                            <span class="flex items-center gap-2"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i> Completadas</span>
+                            <span id="count-completed" class="bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-md text-xs font-bold">0</span>
+                        </button>
+                    </div>
+                </div>
+
+                <hr class="border-slate-100">
+
+                <!-- Filtros de Categorías -->
+                <div>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Categorías</h3>
+                    <div class="space-y-1" id="category-filters">
+                        <!-- Generado dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- COLUMNA DERECHA: Creación de Tareas y Listado -->
+        <section class="md:col-span-8 space-y-6">
+            
+            <!-- Notificaciones Inteligentes de la App -->
+            <div id="toast" class="hidden transform translate-y-2 opacity-0 transition-all duration-300 bg-slate-900 text-white text-sm px-4 py-3 rounded-xl shadow-lg flex items-center justify-between z-40">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+                    <span id="toast-message">Mensaje informativo</span>
+                </div>
+                <button onclick="closeToast()" class="text-slate-400 hover:text-white p-1 rounded-lg transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Formulario de Entrada de Tarea -->
+            <div class="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
+                <h3 class="font-bold text-lg text-slate-900 mb-4 flex items-center gap-2">
+                    <i data-lucide="pencil" class="text-indigo-600 w-5 h-5"></i> ¿Qué tienes pendiente?
+                </h3>
+                
+                <form id="todo-form" onsubmit="handleAddTask(event)" class="space-y-4">
+                    <div class="flex flex-col md:flex-row gap-3">
+                        <!-- Campo de Texto -->
+                        <input type="text" id="task-title" required placeholder="Escribe tu tarea aquí..." 
+                            class="flex-1 px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm placeholder:text-slate-400">
+                        
+                        <!-- Selectores de Categoría y Prioridad -->
+                        <div class="grid grid-cols-2 gap-2 md:flex">
+                            <select id="task-category" class="px-3 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm bg-white font-medium text-slate-600">
+                                <option value="Trabajo">📁 Trabajo</option>
+                                <option value="Personal">🏡 Personal</option>
+                                <option value="Urgente">🚨 Urgente</option>
+                                <option value="Ideas">💡 Ideas</option>
+                            </select>
+                            
+                            <select id="task-priority" class="px-3 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all text-sm bg-white font-medium text-slate-600">
+                                <option value="baja">🟢 Prioridad Baja</option>
+                                <option value="media">🟡 Prioridad Media</option>
+                                <option value="alta">🔴 Prioridad Alta</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Botón de Envío -->
+                    <div class="flex justify-between items-center pt-2">
+                        <span class="text-xs text-slate-400 flex items-center gap-1.5">
+                            <i data-lucide="clock" class="w-3.5 h-3.5"></i> Presiona Enter para añadir rápidamente
+                        </span>
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold text-sm px-6 py-3 rounded-xl transition-all shadow-md shadow-indigo-100 flex items-center gap-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Añadir Tarea
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Listado Principal -->
+            <div class="space-y-4">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                    <h2 class="font-bold text-lg text-slate-900 flex items-center gap-2">
+                        <i data-lucide="activity" class="text-indigo-600 w-5 h-5"></i> Mis Pendientes
+                    </h2>
+                    
+                    <!-- Barra de Búsqueda -->
+                    <div class="relative flex-1 sm:max-w-xs">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                        <input type="text" id="search-bar" oninput="handleSearch()" placeholder="Buscar en mis tareas..." 
+                            class="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                </div>
+
+                <!-- Estado Vacío (Empty State) -->
+                <div id="empty-state" class="hidden bg-white border border-slate-200 rounded-2xl p-8 text-center flex flex-col items-center justify-center space-y-3">
+                    <div class="w-16 h-16 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center">
+                        <i data-lucide="sparkles" class="w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-700">¡Bandeja de entrada limpia!</h4>
+                        <p class="text-sm text-slate-400 max-w-xs mx-auto mt-1">No tienes tareas que coincidan con la vista actual. Agrega una arriba o cambia tus filtros.</p>
+                    </div>
+                </div>
+
+                <!-- Contenedor Dinámico de Tareas -->
+                <div id="tasks-wrapper" class="space-y-3">
+                    <!-- Las tareas se inyectarán de forma dinámica mediante JavaScript -->
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Pie de Página -->
+    <footer class="bg-white border-t border-slate-200 mt-auto py-6 text-center text-xs text-slate-400">
+        <p>© 2026 DoFlow. Guardado automático en el navegador habilitado.</p>
+    </footer>
+
+    <!-- Lógica de la Aplicación -->
+    <script>
+        // --- BASE DE DATOS LOCAL (LocalStorage) ---
+        let tasks = JSON.parse(localStorage.getItem('doflow_tasks_db')) || [
+            { id: 1, title: 'Completar planificación estratégica semanal', category: 'Trabajo', priority: 'alta', completed: false },
+            { id: 2, title: 'Planificar rutina de ejercicios para el fin de semana', category: 'Personal', priority: 'baja', completed: true },
+            { id: 3, title: 'Anotar ideas creativas para mi próximo proyecto', category: 'Ideas', priority: 'media', completed: false }
+        ];
+
+        // --- ESTADO INTERNO ---
+        let currentFilter = 'all'; 
+        let searchQuery = '';
+
+        // Estilos visuales por categorías
+        const categoryStyles = {
+            'Trabajo': { bg: 'bg-blue-50', text: 'text-blue-700 border border-blue-100', dot: 'bg-blue-500' },
+            'Personal': { bg: 'bg-emerald-50', text: 'text-emerald-700 border border-emerald-100', dot: 'bg-emerald-500' },
+            'Urgente': { bg: 'bg-rose-50', text: 'text-rose-700 border border-rose-100', dot: 'bg-rose-500' },
+            'Ideas': { bg: 'bg-amber-50', text: 'text-amber-700 border border-amber-100', dot: 'bg-amber-500' }
+        };
+
+        // Estilos visuales por prioridades
+        const priorityStyles = {
+            'baja': { text: 'Baja', badge: 'text-emerald-600 bg-emerald-50 border border-emerald-100' },
+            'media': { text: 'Media', badge: 'text-amber-600 bg-amber-50 border border-amber-100' },
+            'alta': { text: 'Alta', badge: 'text-rose-600 bg-rose-50 border border-rose-100' }
+        };
+
+        // Mensajes de motivación aleatorios para celebrar completar una tarea
+        const motivationalMessages = [
+            "¡Gran trabajo! Tarea cumplida. 🎉",
+            "¡Eres una máquina de productividad! 💪",
+            "Una menos en la lista. ¡Sigue así! 🚀",
+            "¡Progreso fantástico! Estás organizándote genial. 🌟"
+        ];
+
+        // --- INICIALIZACIÓN ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderDate();
+            renderCategoriesFilter();
+            renderTasks();
+            updateStats();
+            lucide.createIcons();
+        });
+
+        // --- RENDERIZADO DE FECHA ---
+        function renderDate() {
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
+            const today = new Date();
+            // Formatear fecha en español
+            let dateStr = today.toLocaleDateString('es-ES', options);
+            dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+            document.getElementById('current-date').textContent = dateStr;
+        }
+
+        // --- FILTROS DE CATEGORÍA ---
+        function renderCategoriesFilter() {
+            const container = document.getElementById('category-filters');
+            container.innerHTML = '';
+
+            Object.keys(categoryStyles).forEach(cat => {
+                const count = tasks.filter(t => t.category === cat).length;
+                const style = categoryStyles[cat];
+                
+                const btn = document.createElement('button');
+                btn.onclick = () => setFilter(cat);
+                btn.id = `filter-${cat}`;
+                btn.className = `w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-all duration-150`;
+                btn.innerHTML = `
+                    <span class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full ${style.dot}"></span> ${cat}
+                    </span>
+                    <span class="bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md text-xs font-bold">${count}</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        // --- RENDERIZADO PRINCIPAL DE TAREAS ---
+        function renderTasks() {
+            const wrapper = document.getElementById('tasks-wrapper');
+            const emptyState = document.getElementById('empty-state');
+            
+            // Aplicación de filtros de estado y de barra de búsqueda
+            let filteredTasks = tasks.filter(task => {
+                let matchesFilter = true;
+                if (currentFilter === 'pending') matchesFilter = !task.completed;
+                else if (currentFilter === 'completed') matchesFilter = task.completed;
+                else if (currentFilter !== 'all') matchesFilter = task.category === currentFilter;
+
+                let matchesSearch = task.title.toLowerCase().includes(searchQuery.toLowerCase());
+
+                return matchesFilter && matchesSearch;
+            });
+
+            updateFilterButtonsUI();
+
+            if (filteredTasks.length === 0) {
+                wrapper.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            wrapper.innerHTML = '';
+
+            filteredTasks.forEach(task => {
+                const catStyle = categoryStyles[task.category] || categoryStyles['Trabajo'];
+                const priStyle = priorityStyles[task.priority] || priorityStyles['media'];
+
+                const taskEl = document.createElement('div');
+                taskEl.className = `task-item bg-white border border-slate-200 p-4 rounded-2xl flex items-start gap-3 shadow-sm hover:shadow-md ${task.completed ? 'opacity-60 bg-slate-50/50' : ''}`;
+                
+                taskEl.innerHTML = `
+                    <!-- Botón Selector de Estado (Checkbox premium) -->
+                    <button onclick="toggleTask(${task.id})" class="mt-0.5 focus:outline-none transition-transform active:scale-90" aria-label="Marcar tarea">
+                        ${task.completed ? 
+                            `<div class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-sm shadow-indigo-200">
+                                <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>
+                             </div>` : 
+                            `<div class="w-6 h-6 rounded-full border-2 border-slate-300 hover:border-indigo-600 hover:scale-105 transition-all bg-white"></div>`
+                        }
+                    </button>
+
+                    <!-- Detalles e Información de Tarea -->
+                    <div class="flex-1 min-w-0 space-y-2">
+                        <p class="text-sm font-medium leading-relaxed break-words cursor-pointer select-none ${task.completed ? 'line-through text-slate-400' : 'text-slate-800'}" onclick="toggleTask(${task.id})">
+                            ${escapeHTML(task.title)}
+                        </p>
+                        
+                        <div class="flex flex-wrap items-center gap-2 text-xs">
+                            <!-- Badge de Categoría -->
+                            <span class="px-2.5 py-1 rounded-full font-semibold ${catStyle.bg} ${catStyle.text}">
+                                ${task.category}
+                            </span>
+                            <!-- Badge de Prioridad -->
+                            <span class="px-2.5 py-1 rounded-full font-semibold ${priStyle.badge}">
+                                Prioridad ${priStyle.text}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Botón Eliminar -->
+                    <button onclick="deleteTask(${task.id})" class="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-xl transition-all self-center" title="Eliminar tarea">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                `;
+                
+                wrapper.appendChild(taskEl);
+            });
+
+            // Re-renderizar iconos dinámicos
+            lucide.createIcons();
+        }
+
+        // --- CONTROLADORES DE ACCIONES ---
+
+        // Crear una nueva tarea
+        function handleAddTask(e) {
+            e.preventDefault();
+            const titleInput = document.getElementById('task-title');
+            const categorySelect = document.getElementById('task-category');
+            const prioritySelect = document.getElementById('task-priority');
+
+            const title = titleInput.value.trim();
+            if (!title) return;
+
+            const newTask = {
+                id: Date.now(),
+                title,
+                category: categorySelect.value,
+                priority: prioritySelect.value,
+                completed: false
+            };
+
+            tasks.unshift(newTask);
+            saveAndRefresh();
+            
+            // Limpiar formulario y reenfocar
+            titleInput.value = '';
+            titleInput.focus();
+            
+            showToast('¡Tarea agregada con éxito! 🎯');
+        }
+
+        // Cambiar estado completada/pendiente de la tarea
+        function toggleTask(id) {
+            tasks = tasks.map(t => {
+                if (t.id === id) {
+                    const isNowCompleted = !t.completed;
+                    if (isNowCompleted) {
+                        // Lanzar un mensaje motivador aleatorio
+                        const randomMsg = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+                        showToast(randomMsg);
+                    }
+                    return { ...t, completed: isNowCompleted };
+                }
+                return t;
+            });
+            saveAndRefresh();
+        }
+
+        // Eliminar una tarea por completo
+        function deleteTask(id) {
+            tasks = tasks.filter(t => t.id !== id);
+            saveAndRefresh();
+            showToast('Tarea eliminada de la lista.');
+        }
+
+        // Guardar y refrescar todos los componentes
+        function saveAndRefresh() {
+            localStorage.setItem('doflow_tasks_db', JSON.stringify(tasks));
+            renderTasks();
+            renderCategoriesFilter();
+            updateStats();
+        }
+
+        // --- FILTROS DE INTERFAZ ---
+        function setFilter(filter) {
+            currentFilter = filter;
+            renderTasks();
+        }
+
+        function updateFilterButtonsUI() {
+            const allBtnIds = ['all', 'pending', 'completed', 'Trabajo', 'Personal', 'Urgente', 'Ideas'];
+            
+            allBtnIds.forEach(id => {
+                const el = document.getElementById(`filter-${id}`);
+                if (el) {
+                    el.className = `w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-all duration-150`;
+                }
+            });
+
+            // Establecer estilos activos para la selección actual
+            const activeBtn = document.getElementById(`filter-${currentFilter}`);
+            if (activeBtn) {
+                activeBtn.className = `w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-semibold bg-indigo-50 text-indigo-700 transition-all duration-150`;
+            }
+        }
+
+        // --- SISTEMA DE BÚSQUEDA ---
+        function handleSearch() {
+            searchQuery = document.getElementById('search-bar').value;
+            renderTasks();
+        }
+
+        // --- ACTUALIZACIÓN DE ESTADÍSTICAS ---
+        function updateStats() {
+            const total = tasks.length;
+            const completed = tasks.filter(t => t.completed).length;
+            const pending = total - completed;
+
+            // Actualizar textos e interfaces
+            document.getElementById('count-all').textContent = total;
+            document.getElementById('count-pending').textContent = pending;
+            document.getElementById('count-completed').textContent = completed;
+
+            const ratio = total > 0 ? Math.round((completed / total) * 100) : 0;
+            document.getElementById('completion-ratio').textContent = `${ratio}%`;
+            document.getElementById('progress-bar').style.width = `${ratio}%`;
+            document.getElementById('tasks-count-summary').textContent = `${completed} de ${total} completadas`;
+
+            // Mensajes de ánimo basados en el progreso
+            const encouragement = document.getElementById('progress-encouragement');
+            if (ratio === 100 && total > 0) {
+                encouragement.textContent = "¡Día completado perfectamente! 🏆";
+            } else if (ratio >= 75) {
+                encouragement.textContent = "¡Casi listo! Falta poquísimo. 🔥";
+            } else if (ratio >= 50) {
+                encouragement.textContent = "¡A mitad de camino! 🚀";
+            } else if (ratio > 0) {
+                encouragement.textContent = "¡Buen comienzo! Sigue así. ✨";
+            } else {
+                encouragement.textContent = "¡Empieza a organizarte hoy! 🎯";
+            }
+        }
+
+        // --- CONTROL DE TOASTS (ALERTAS INTEGRADAS) ---
+        let toastTimer;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            
+            clearTimeout(toastTimer);
+            toastMsg.textContent = message;
+            
+            // Animación de entrada
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 50);
+
+            // Cerrar automáticamente en 3 segundos
+            toastTimer = setTimeout(() => {
+                closeToast();
+            }, 3000);
+        }
+
+        function closeToast() {
+            const toast = document.getElementById('toast');
+            toast.classList.add('translate-y-2', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 300);
+        }
+
+        // Seguridad ante inyecciones de código HTML
+        function escapeHTML(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+    </script>
+</body>
+</html>
